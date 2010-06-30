@@ -1,0 +1,5 @@
+c:\dev\squirrel\squirrel\MvcApplication1\obj\Debug\ResolveAssemblyReference.cache
+c:\dev\squirrel\squirrel\MvcApplication1\bin\MvcApplication1.dll
+c:\dev\squirrel\squirrel\MvcApplication1\bin\MvcApplication1.pdb
+c:\dev\squirrel\squirrel\MvcApplication1\obj\Debug\MvcApplication1.dll
+c:\dev\squirrel\squirrel\MvcApplication1\obj\Debug\MvcApplication1.pdb

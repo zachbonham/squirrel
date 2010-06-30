@@ -1,0 +1,8 @@
+c:\dev\squirrel\squirrel.ui.Tests\bin\Debug\squirrel.ui.Tests.dll.config
+c:\dev\squirrel\squirrel.ui.Tests\bin\Debug\squirrel.ui.Tests.dll
+c:\dev\squirrel\squirrel.ui.Tests\bin\Debug\squirrel.ui.Tests.pdb
+c:\dev\squirrel\squirrel.ui.Tests\bin\Debug\squirrel.ui.dll
+c:\dev\squirrel\squirrel.ui.Tests\bin\Debug\squirrel.ui.pdb
+c:\dev\squirrel\squirrel.ui.Tests\obj\Debug\ResolveAssemblyReference.cache
+c:\dev\squirrel\squirrel.ui.Tests\obj\Debug\squirrel.ui.Tests.dll
+c:\dev\squirrel\squirrel.ui.Tests\obj\Debug\squirrel.ui.Tests.pdb
