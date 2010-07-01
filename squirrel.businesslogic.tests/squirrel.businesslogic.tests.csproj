@@ -5,14 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CEC95ADD-9E09-4351-AB2D-D5217D94BE1D}</ProjectGuid>
+    <ProjectGuid>{DEF685BB-B260-437A-82DA-3A36E1A3BDE9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>squirrel.contracts</RootNamespace>
-    <AssemblyName>squirrel.contracts</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <RootNamespace>squirrel.businesslogic.tests</RootNamespace>
+    <AssemblyName>squirrel.businesslogic.tests</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,15 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Http">
-      <HintPath>..\lib\Microsoft.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Http.Extensions">
-      <HintPath>..\lib\Microsoft.Http.Extensions.dll</HintPath>
+    <Reference Include="nunit.framework">
+      <HintPath>..\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,10 +43,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IConfigurationService.cs" />
-    <Compile Include="Nut.cs" />
+    <Compile Include="NutTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WellKnownDb.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\squirrel.businesslogic\squirrel.businesslogic.csproj">
+      <Project>{D07F17DB-CE0C-46A1-A3B9-5F45C6ED6203}</Project>
+      <Name>squirrel.businesslogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\squirrel.contracts\squirrel.contracts.csproj">
+      <Project>{CEC95ADD-9E09-4351-AB2D-D5217D94BE1D}</Project>
+      <Name>squirrel.contracts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

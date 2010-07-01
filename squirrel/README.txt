@@ -45,6 +45,7 @@ Its entirely up to you.
 squirrel - the REST based WCF service.  Stores application configuration, a collection of "nuts"
 
 TODO
+-- refactor
 -- add authentication requirement for requests
 -- add application configuration isolation using new databases for each
 account.

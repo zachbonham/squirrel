@@ -74,7 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationService.cs" />
-    <Compile Include="SampleItem.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -85,6 +84,10 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\squirrel.businesslogic\squirrel.businesslogic.csproj">
+      <Project>{D07F17DB-CE0C-46A1-A3B9-5F45C6ED6203}</Project>
+      <Name>squirrel.businesslogic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\squirrel.contracts\squirrel.contracts.csproj">
       <Project>{CEC95ADD-9E09-4351-AB2D-D5217D94BE1D}</Project>
       <Name>squirrel.contracts</Name>

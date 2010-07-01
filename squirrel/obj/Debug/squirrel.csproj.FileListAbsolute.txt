@@ -1,0 +1,15 @@
+c:\dev\squirrel\squirrel\bin\squirrel.dll
+c:\dev\squirrel\squirrel\bin\squirrel.pdb
+c:\dev\squirrel\squirrel\obj\Debug\ResolveAssemblyReference.cache
+c:\dev\squirrel\squirrel\obj\Debug\squirrel.dll
+c:\dev\squirrel\squirrel\obj\Debug\squirrel.pdb
+c:\dev\squirrel\squirrel\bin\squirrel.contracts.dll
+c:\dev\squirrel\squirrel\bin\squirrel.contracts.pdb
+c:\dev\squirrel\squirrel\bin\MongoDB.Driver.dll
+c:\dev\squirrel\squirrel\bin\MongoDB.GridFS.dll
+c:\dev\squirrel\squirrel\bin\MongoDB.Linq.dll
+c:\dev\squirrel\squirrel\bin\MongoDB.Driver.xml
+c:\dev\squirrel\squirrel\bin\MongoDB.GridFS.xml
+c:\dev\squirrel\squirrel\bin\MongoDB.Linq.xml
+C:\dev\squirrel\squirrel\bin\squirrel.businesslogic.dll
+C:\dev\squirrel\squirrel\bin\squirrel.businesslogic.pdb

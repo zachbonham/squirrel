@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
@@ -8,203 +9,141 @@ using System.Text;
 using MongoDB.Driver;
 
 using squirrel.contracts;
+using squirrel.businesslogic;
+using System.Diagnostics;
 
 namespace squirrel
 {
+
+    public static class NameValueCollectionExtensions
+    {
+        public static Dictionary<string, string> ToAttributes(this NameValueCollection collection)
+        {
+            Dictionary<string, string> properties = new Dictionary<string, string>();
+
+            foreach (string k in collection.AllKeys)
+            {
+
+                var t = collection[k];
+
+                if (k == "value")
+                {
+                    properties["value"] = t as string;
+                }
+                else
+                {
+                    properties[k] = collection[k];
+
+                }
+            }
+
+            return properties;
+        }
+    }
     // Start the service and browse to http://<machine_name>:<port>/Service1/help to view the service's generated help page
     // NOTE: By default, a new instance of the service is created for each call; change the InstanceContextMode to Single if you want
     // a single instance of the service to process all calls.	
     [ServiceContract]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed)]
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
-    // NOTE: If the service is renamed, remember to update the global.asax.cs file
     public class ConfigurationService
     {
 
-        [WebGet(UriTemplate = "{account}/{table}")]
-        public List<Nut> GetCollection(string account, string table)
+        [WebGet(UriTemplate = "{account}/{container}")]
+        public List<Nut> GetCollection(string account, string container)
         {
 
             List<Nut> nuts = new List<Nut>();
 
 
-            Mongo mongo = new Mongo();
-            mongo.Connect();
-
-            var db = mongo.GetDatabase(WellKnownDb.AppConfiguration);
-
-            var collection = db.GetCollection(table);
-
-            var query = new Document();
-
-            query["account"] = account;
-
-
-            var querystring = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-            foreach (string k in querystring.AllKeys)
+            try
             {
 
-                var t = querystring[k];
+                var properties = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToAttributes();
 
-                if (k == "value")
-                {
-                    query["value"] = t as string;
-                }
-                else
-                {
-                    query[k] = querystring[k];
-
-                }
+                nuts = SquirrelBusinessLogic.FindAllInContainer(account, container, properties);
             }
-
-
-            var result = collection.Find(query);
-
-        
-            foreach (var r in result.Documents)
+            catch (Exception eax)
             {
-
-                var nut = new Nut { Database = WellKnownDb.AppConfiguration, Table = table, Key = r["name"] as string, Properties = new Dictionary<string, string>() };
-
-                nut.Value = r["value"] as string;
-                nut.Uri = string.Format("/{0}/{1}/{2}", account, table, r["name"]);
-
-                foreach (var j in r.Keys)
-                {
-                    nut.Properties.Add(j, r[j] as string);
-                }
-
-                nuts.Add(nut);
+                throw new WebFaultException<string>(eax.Message, System.Net.HttpStatusCode.InternalServerError);
             }
-
+            
             return nuts; 
 
         }
 
-        [WebInvoke(UriTemplate = "{account}/{table}", Method = "POST")]
-        public void Create(string account, string table, Nut instance)
+        [WebInvoke(UriTemplate = "{account}/{container}", Method = "POST")]
+        public void Create(string account, string container, Nut nut)
         {
 
-            Mongo mongo = new Mongo();
-            mongo.Connect();
+            bool success = false;
 
-            var db = mongo.GetDatabase(WellKnownDb.AppConfiguration);
-
-            var collection = db.GetCollection(table);
-            
-            var doc = new Document();
-
-            doc["account"] = account;
-            doc["name"] = instance.Key;
-            doc["value"] = instance.Value;
-
-
-            if (instance.Properties != null)
+            try
             {
-                foreach (var k in instance.Properties.Keys)
+                success = SquirrelBusinessLogic.CreateNut(account, container, nut); 
+                
+            }
+            catch (Exception eax)
+            {
+                
+                throw new WebFaultException<string>(eax.Message, System.Net.HttpStatusCode.InternalServerError);
+
+            }
+            finally
+            {
+                if (success)
                 {
-                    doc.Add(k, instance.Properties[k]);
+                    WebOperationContext.Current.OutgoingResponse.SetStatusAsCreated(CreateUri(account, container, nut));
                 }
             }
 
-            bool alreadyExists = collection.FindOne(doc) != null;
-
-            if (alreadyExists)
-            {
-                throw new WebFaultException<string>("Nut already exists", System.Net.HttpStatusCode.BadRequest);
-            }
-            else
-            {
-                collection.Insert(doc);
-            }
-
-            
-            WebOperationContext.Current.OutgoingResponse.SetStatusAsCreated(CreateUri(account, table, instance));
-            
         }
 
-        private Uri CreateUri(string account, string table, Nut instance)
+        private Uri CreateUri(string account, string table, Nut nut)
         {
-            string t = string.Format("{0}/{1}/{2}/{3}", WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri, account, table, instance.Key);
+            string t = string.Format("{0}/{1}/{2}/{3}", WebOperationContext.Current.IncomingRequest.UriTemplateMatch.BaseUri, account, table, nut.Key);
 
            
             return new Uri(t);
         }
 
-        [WebGet(UriTemplate = @"{account}/{table}/{name}")]
-        public Nut Get(string account, string table, string name)
+        [WebGet(UriTemplate = @"{account}/{container}/{name}")]
+        public Nut Get(string account, string container, string name)
         {
-
-            Mongo mongo = new Mongo();
-            mongo.Connect();
-
-            var db = mongo.GetDatabase(WellKnownDb.AppConfiguration);
-
-            var collection = db.GetCollection(table);
-
-            var query = new Document();
-
-            query["name"] = name;
-            query["account"] = account;
-
-
-            var querystring = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-
-            foreach (string k in querystring.AllKeys)
-            {
-
-                var t = querystring[k];
-
-                if (k == "value")
-                {
-                    query["value"] = t as string;
-                }
-                else
-                {
-                    query[k] = querystring[k];
-                    
-                }
-            }
-
-            
-            var result = collection.FindOne(query);
 
             Nut nut = null;
 
-            if (result != null)
+            try
+            {
+                
+                var attributes = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters.ToAttributes();
+
+            
+                nut = SquirrelBusinessLogic.FindNut(account, container, name, attributes);
+
+            }
+            catch (Exception eax)
             {
 
-                nut = new Nut { Database = WellKnownDb.AppConfiguration, Table = table, Key = name, Properties = new Dictionary<string,string>() };
+                throw new WebFaultException<string>(eax.Message, System.Net.HttpStatusCode.InternalServerError);
 
-                nut.Value = result["value"] as string;
-                nut.Uri = string.Format("/{0}/{1}/{2}", account, table, name);
-
-                foreach (var j in result.Keys)
+            }
+            finally
+            {
+                if (nut == null)
                 {
-                    nut.Properties.Add(j, result[j] as string);
+                    throw new WebFaultException<string>(string.Format("{0}/{1} not found", container, name), System.Net.HttpStatusCode.NotFound);                  
                 }
-                                
-            }
-            else
-            {
-                throw new WebFaultException<string>(string.Format("{0}/{1} not found", table, name), System.Net.HttpStatusCode.NotFound);
+                
             }
 
-            return nut; 
+            return nut;
+
         }
         
-        [WebInvoke(UriTemplate = "{account}/{table}/{name}", Method = "PUT")]
-        public SampleItem Update(string account, string table, string name, Nut instance)
-        {
-            // TODO: Update the given instance of SampleItem in the collection
-            throw new NotImplementedException();
-        }
-
-
-       
-        [WebInvoke(UriTemplate = "{account}/{table}/{name}", Method = "DELETE")]
-        public void Delete(string account, string table, string name)
+   
+        [WebInvoke(UriTemplate = "{account}/{container}/{name}", Method = "DELETE")]
+        public void Delete(string account, string container, string name)
         {
             // TODO: Remove the instance of SampleItem with the given id from the collection
             throw new NotImplementedException();
